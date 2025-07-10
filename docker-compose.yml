@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  scraper:
+    build: .
+    container_name: utku-optik-scraper
+    environment:
+      - SFTP_HOST=${SFTP_HOST:-partnerupload.google.com}
+      - SFTP_PORT=${SFTP_PORT:-19321}
+      - SFTP_USERNAME=${SFTP_USERNAME}
+      - SFTP_PASSWORD=${SFTP_PASSWORD}
+      - SCRAPE_LINKS=${SCRAPE_LINKS:-true}
+      - MAX_WORKERS=${MAX_WORKERS:-8}
+      - DELAY=${DELAY:-0.1}
+      - ENABLE_RETRY=${ENABLE_RETRY:-true}
+      - UPLOAD_TO_SFTP=${UPLOAD_TO_SFTP:-true}
+    volumes:
+      - ./data:/app/.data
+      - ./logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - scraper-network
+
+  # Optional: Add a simple web interface for monitoring
+  web:
+    build: .
+    container_name: utku-optik-web
+    command: python -m http.server 8000 --directory .data
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/.data:ro
+    depends_on:
+      - scraper
+    networks:
+      - scraper-network
+    profiles:
+      - monitoring
+
+networks:
+  scraper-network:
+    driver: bridge
+
+volumes:
+  scraper-data:
+    driver: local

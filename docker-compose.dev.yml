@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  scraper:
+    build: .
+    container_name: utku-optik-scraper-dev
+    environment:
+      - SFTP_HOST=${SFTP_HOST:-partnerupload.google.com}
+      - SFTP_PORT=${SFTP_PORT:-19321}
+      - SFTP_USERNAME=${SFTP_USERNAME}
+      - SFTP_PASSWORD=${SFTP_PASSWORD}
+      - SCRAPE_LINKS=${SCRAPE_LINKS:-true}
+      - MAX_WORKERS=${MAX_WORKERS:-4}
+      - DELAY=${DELAY:-0.2}
+      - ENABLE_RETRY=${ENABLE_RETRY:-true}
+      - UPLOAD_TO_SFTP=${UPLOAD_TO_SFTP:-false}
+    volumes:
+      - .:/app
+      - ./data:/app/.data
+      - ./logs:/app/logs
+    working_dir: /app
+    command: python main.py
+    networks:
+      - scraper-network
+
+  web:
+    build: .
+    container_name: utku-optik-web-dev
+    command: python -m http.server 8000 --directory .data
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/.data:ro
+    depends_on:
+      - scraper
+    networks:
+      - scraper-network
+
+networks:
+  scraper-network:
+    driver: bridge
