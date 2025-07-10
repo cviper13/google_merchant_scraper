@@ -42,54 +42,54 @@ check_env() {
 case "${1:-help}" in
     build)
         echo "🔨 Building Docker image..."
-        docker-compose build
+        docker compose build
         ;;
     run)
         echo "🚀 Running scraper..."
         check_env
-        docker-compose up scraper
+        docker compose up scraper
         ;;
     start)
         echo "🚀 Starting scraper in background..."
         check_env
-        docker-compose up -d scraper
+        docker compose up -d scraper
         echo "✅ Scraper started. Use '$0 logs' to view progress."
         ;;
     stop)
         echo "🛑 Stopping scraper..."
-        docker-compose down
+        docker compose down
         ;;
     logs)
         echo "📋 Showing logs..."
-        docker-compose logs -f scraper
+        docker compose logs -f scraper
         ;;
     status)
         echo "📊 Container status:"
-        docker-compose ps
+        docker compose ps
         ;;
     clean)
         echo "🧹 Cleaning up..."
-        docker-compose down --rmi all --volumes --remove-orphans
+        docker compose down --rmi all --volumes --remove-orphans
         docker system prune -f
         ;;
     dev)
         echo "🔧 Running in development mode..."
         check_env
-        docker-compose -f $DEV_COMPOSE_FILE up
+        docker compose -f $DEV_COMPOSE_FILE up
         ;;
     monitor)
         echo "📊 Starting with monitoring dashboard..."
         check_env
-        docker-compose --profile monitoring up -d
+        docker compose --profile monitoring up -d
         echo "✅ Monitoring available at http://localhost:8000"
         ;;
     health)
         echo "🏥 Running health check..."
-        docker-compose run --rm scraper python health_check.py
+        docker compose run --rm scraper python health_check.py
         ;;
     shell)
         echo "🐚 Opening shell in container..."
-        docker-compose exec scraper /bin/bash
+        docker compose exec scraper /bin/bash
         ;;
     help)
         show_help
