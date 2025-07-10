@@ -103,7 +103,7 @@ class CombinedUtkuOptikScraper:
         self.total_pages = int(os.getenv('TOTAL_PAGES', '25'))
         
         # Ensure data directory exists
-        self.data_dir = Path(".data")
+        self.data_dir = Path("data")
         self.data_dir.mkdir(exist_ok=True)
         
         logger.info(f"Initialized scraper with base_url: {self.base_url}")
@@ -141,7 +141,7 @@ class CombinedUtkuOptikScraper:
             
         return self.local_data.session
 
-    def scrape_product_links(self, output_file: str = ".data/product_links.txt") -> List[str]:
+    def scrape_product_links(self, output_file: str = "data/product_links.txt") -> List[str]:
         """Scrape product links from category pages"""
         logger.info("Starting to scrape product links from category pages")
         all_links = set()
@@ -541,9 +541,9 @@ class CombinedUtkuOptikScraper:
         }
         return stats
 
-    def run_complete_scraping(self, scrape_links: bool = True, links_file: str = ".data/product_links.txt", 
-                             tsv_output: str = ".data/google_merchant_products.tsv",
-                             json_output: str = ".data/google_merchant_products.json",
+    def run_complete_scraping(self, scrape_links: bool = True, links_file: str = "data/product_links.txt", 
+                             tsv_output: str = "data/google_merchant_products.tsv",
+                             json_output: str = "data/google_merchant_products.json",
                              delay: float = 0.5, enable_retry: bool = True, 
                              upload_to_sftp: bool = True) -> None:
         """Run the complete scraping process"""
@@ -622,9 +622,9 @@ def main():
         # Run the complete scraping process
         scraper.run_complete_scraping(
             scrape_links=scrape_links,
-            links_file=".data/product_links.txt",
-            tsv_output=".data/google_merchant_products.tsv",
-            json_output=".data/google_merchant_products.json",
+            links_file="data/product_links.txt",
+            tsv_output="data/google_merchant_products.tsv",
+            json_output="data/google_merchant_products.json",
             delay=delay,
             enable_retry=enable_retry,
             upload_to_sftp=upload_to_sftp
