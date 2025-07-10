@@ -25,8 +25,8 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 # Copy source code
 COPY --chown=scraper:scraper . .
 
-# Create data directory
-RUN mkdir -p .data
+# Create data and logs directories with proper permissions
+RUN mkdir -p .data logs && chown -R scraper:scraper .data logs
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1

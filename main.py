@@ -25,17 +25,28 @@ load_dotenv()
 
 # Create logs directory if it doesn't exist
 log_dir = Path("logs")
-log_dir.mkdir(exist_ok=True)
+try:
+    log_dir.mkdir(exist_ok=True)
+    # Test if we can write to the log directory
+    test_file = log_dir / '.test_write'
+    test_file.touch()
+    test_file.unlink()
+    use_file_handler = True
+except (PermissionError, OSError) as e:
+    print(f"Warning: Cannot write to logs directory: {e}")
+    use_file_handler = False
 
 # Set up logging with file and console handlers
 log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+handlers = [logging.StreamHandler(sys.stdout)]
+
+if use_file_handler:
+    handlers.append(logging.FileHandler(log_dir / 'scraper.log'))
+
 logging.basicConfig(
     level=logging.INFO,
     format=log_format,
-    handlers=[
-        logging.FileHandler(log_dir / 'scraper.log'),
-        logging.StreamHandler(sys.stdout)
-    ]
+    handlers=handlers
 )
 logger = logging.getLogger(__name__)
 
